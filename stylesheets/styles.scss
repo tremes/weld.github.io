@@ -221,3 +221,24 @@ div.row {
 p.tableblock {
   margin: 5px;
 }
+
+.bootpag {
+  display: inline-block;
+  padding-left: 0;
+  margin: 15px 0 0 15px;
+  border-radius: 4px;
+}
+
+.bootpag>li {
+  margin: 0 5px 0 5px;
+  text-align: center;
+  display: inline;
+}
+.bootpag>.disabled>a {
+  z-index: 2;
+  color: #fff;
+  padding: 0 5px 0 5px;
+  cursor: default;
+  background-color: #337ab7;
+  border-color: #337ab7;
+}

@@ -1,0 +1,70 @@
+---
+layout: base
+title: Results
+---
+%div{:id => "results"}
+%p{:id => "pagination"}
+
+:javascript
+  $.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if(results == 0){
+      return null
+    }else {
+      return results[1] || 0;
+    }
+  }
+
+  $.onDataSuccess = function(success){
+    var output="<ul>";
+
+    for (var i in success.hits.hits) {
+      var res = success.hits.hits[i].fields;
+      output += "<p><li>"
+      output += "<a href=" + res.sys_url_view + " target=\"_blank\">" + res.sys_title + "</a><br/>";
+      (res.sys_description != undefined) ? output += res.sys_description + "<br/>" : "";
+      output += "<i>" + res.sys_url_view +"</i><br/>";
+      output += "</li></p>"
+    }
+    output += "</ul>";
+    $("#results").html(output);
+  }
+
+  // overload onDataSucces function to include paging
+  $.onDataSuccesWithPaging = function(success){
+
+    $.onDataSuccess(success);
+
+    var resultSetSize = Math.floor(success.hits.total/10) + 1;
+    $('#pagination').bootpag({
+        total: resultSetSize,
+        page: 1
+    });
+  }
+
+  $(document).ready(function() {
+    var searchQuery = "\"" + $.urlParam('search') + "\"";
+    $.ajax({
+      url: "http://dcp2.jboss.org/v2/rest/search?project=weld&query=" + searchQuery + "&sortBy=new-create",
+      success: $.onDataSuccesWithPaging
+    })
+
+    $('#toggle_menu').click(function(){
+        $("#mobile_menu").toggle();
+     });
+
+  });
+
+  $('#pagination').on("page", function(event, num){
+
+    var searchQuery = "\"" + $.urlParam('search') + "\"";
+    var set = (num > 0) ? (num - 1) * 10 : 0;
+     $.ajax({
+      url: "http://dcp2.jboss.org/v2/rest/search?project=weld&query=" + searchQuery + "&sortBy=new-create&from="+set,
+      success: $.onDataSuccess
+     })
+  });
+
+
+
+

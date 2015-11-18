@@ -13,6 +13,7 @@
 
     %script{ :type=>'text/javascript', :src=>'//static.jboss.org/theme/js/libs/jquery/jquery-1.9.1.min.js' }
     %script{ :type=>'text/javascript', :src=>'//static.jboss.org/js/_jbossorg-tabzilla.js' }
+    %script{ :type=>'text/javascript', :src=>'//cdnjs.cloudflare.com/ajax/libs/jquery-bootpag/1.0.4/jquery.bootpag.js' }
     /[if lt IE 9]
       %script{ :type=>'text/javascript', :src=>'//html5shim.googlecode.com/svn/trunk/html5.js' }
 
@@ -27,6 +28,10 @@
       .row
         .col-md-2.col-sm-3
           %div.sidebar-nav
+            %input{:id => "search-text", :type => "search"}
+            %input{:id => "search", :type => "submit", :value => "Search"}
+            %br
+            %br
             %div.navbar.navbar-default{"role"=>"navigation"}
               %div.navbar-header
                 %button.navbar-toggle{type=>"button","data-toggle"=>"collapse","data-target"=>".sidebar-navbar-collapse"}
@@ -108,4 +113,8 @@
       $('#toggle_menu').click(function(){
         $("#mobile_menu").toggle();
       });
+    });
+
+    $("#search").click(function() {
+        window.location.href = "/search-results/index.html?search="+$('#search-text').val();
     });
