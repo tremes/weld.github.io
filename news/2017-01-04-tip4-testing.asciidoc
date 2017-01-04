@@ -1,0 +1,72 @@
+---
+layout: news
+title: Weld Tip 4 - Testing Weld apps
+author: Tomas Remes
+priority: 1
+change_frequency: weekly
+excerpt: Explore various aspects of integration testing of CDI/Weld applications.
+desc: Weld Tip 4 - Testing Weld apps
+tags: [tips]
+---
+:linkattrs:
+:toc: macro
+:toc-title: Contents
+:icons: font
+
+toc::[]
+
+In the next article of our Weld Tips series we are going to focus on integration testing of Weld applications.
+By integration testing term we mean testing at some kind of container, which in case of Weld could mean various environments.
+In each case we take advantage of link:http://arquillian.org/[Arquillian] integration testing framework.
+Let's first look at various environments and then look at link:https://github.com/arquillian/arquillian-container-weld[Arquillian Weld Embedded container], which you can use across all the environments.
+
+== Java EE application server
+When you want to test your application at Java EE application server you basically need to create your test deployment archive, deploy it, execute the test and undeploy the test deployment archive.
+All these steps can Arquillian along with link:http://arquillian.org/modules/shrinkwrap-shrinkwrap/[ShrinkWrap] do for you.
+With Arquillian you can either use so called managed container - in this case Arquillian will start and stop the desired container for you - or remote container - Arquillian will try to connect to already running container.
+You can use CDI out of the box since you are running at Java EE application server.
+Just pay attention to link:https://docs.jboss.org/author/display/ARQ/Test+run+modes[test mode] you are using.
+You can check available Arquillian container adapters link:http://arquillian.org/modules/[here].
+
+For example to use Arquillian WildFly Managed container you need to define following dependency:
+[ source, xml ]
+----
+               <dependency>
+                   <groupId>org.wildfly.arquillian</groupId>
+                   <artifactId>wildfly-arquillian-container-managed</artifactId>
+                   <version>1.1.0.Final</version>
+                   <scope>test</scope>
+               </dependency>
+----
+
+== Servlet environment
+In basic Servlet environment you need to deploy all the dependencies of Weld Servlet integration (as CDI API, Interceptors API, etc.) to your Servlet container and thus embedded container option could be sufficient.
+As you can link:http://arquillian.org/modules/[see] Arquillian offers embedded container adapters for all well known Servlet containers as Tomcat, Jetty and Undertow.
+
+For example to use Arquillian Embedded Tomcat container you need to define following dependency:
+[ source, xml ]
+----
+               <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-tomcat-embedded-8</artifactId>
+                    <version>1.0.0.CR8</version>
+                    <scope>test</scope>
+                </dependency>
+----
+
+== Java SE environment
+
+== Arquillian Weld Embedded container
+This test container is suitable in situations when you don't need to work with full Java EE application server and you are OK with dummy mock EJB, JTA, JPA etc. services.
+We recommend you to go through README file - especially pay attention to flat deployment structure (this means this container is not very suitable for testing EAR deployments) and configuration property for setting testing environment.
+
+The maven dependency for this container could look like the following:
+[ source, xml ]
+----
+               <dependency>
+                    <groupId>org.jboss.arquillian.container</groupId>
+                    <artifactId>arquillian-weld-embedded</artifactId>
+                    <version>2.0.0.Beta4</version>
+                    <scope>test</scope>
+                </dependency>
+----
