@@ -17,30 +17,31 @@ toc::[]
 
 In this follow-up article of our Weld Tips series we are going to focus on integration testing of CDI/Weld applications.
 To set things straight - by integration testing we mean testing in some kind of container and hence in certain environment (SE, servlet, full EE server).
-And whatever the environment, we always make use of link:http://arquillian.org/[Arquillian] integration testing framework.
+However, no matter the environment we always make use of link:http://arquillian.org/[Arquillian] integration testing framework.
 
 == Arquillian as the chosen framework for testing
 While Arquillian may look complex at first, it is certainly worth it. Here are some of the advantages it gives you:
 
-* Allows usage of `@Inject` directly in test classes
+* Allows usage of CDI `@javax.inject.Inject` directly in test classes
 * Works well with ShrinkWrap making archive creation and deployment a breeze
 ** link:http://arquillian.org/guides/shrinkwrap_introduction/[ShrinkWrap] can create any type of deployment archive (WAR, JAR, even infamous EAR) with exactly the capabilities you wish it to have
 ** You can use dedicated `beans.xml` or `@Alternatives` for given test case
-* Allows to write one test and run it on any container
-** Arquillian only need correct adapter; therefore combined with Maven profiles, this gives you some nice fire power for matrix testing
+* Portability - allows to write one test and run it on any container
+** Arquillian only needs correct adapter; therefore, combined with Maven profiles this gives you some nice fire power for matrix testing
 * Allows for very complex testing scenarios
 ** For instance you can create several deployments which you then manually (if you so wish) deploy/undeploy
-** This makes it viable even for cluster testing (session replications for instance)
+** This makes it viable even for cluster testing (session replication, failover scenarios, ...)
 * Can start the application server itself or can just connect to running one
 
-Should you need an inspiration, you needn't look no further than our link:https://github.com/weld/core/tree/master/tests-arquillian/src/test/java/org/jboss/weld/tests[testsuite].
-To further support the though of Arquillian usefulness for CDI/Weld testing, we may point out that even link:https://github.com/cdi-spec/cdi-tck/tree/master/impl/src/main/java/org/jboss/cdi/tck/tests[CDI TCK tests] use it.
+If you are a complete Arquillian rookie, you might want to look at their link:http://arquillian.org/guides/getting_started_rinse_and_repeat/[Getting started guide].
+Should you just need an inspiration, you needn't look any further than our link:https://github.com/weld/core/tree/master/tests-arquillian/src/test/java/org/jboss/weld/tests[testsuite].
+To support the though of Arquillian usefulness for CDI/Weld testing, we may also point out that even link:https://github.com/cdi-spec/cdi-tck/tree/master/impl/src/main/java/org/jboss/cdi/tck/tests[CDI TCK tests] use it.
 
 
-Now, let's take a look at different environments and then round it up with link:https://github.com/arquillian/arquillian-container-weld[Arquillian Weld Embedded container], which can be used in each every environment.
+Now, let's take a look at different environments and then round it up with link:https://github.com/arquillian/arquillian-container-weld[Arquillian Weld Embedded container], which can be used in each and every environment.
 
 == Java EE application server
-When you want to test your application in Java EE application server you basically need to create your test deployment archive, deploy it, execute the test and undeploy the test deployment archive.
+When you want to test your application in Java EE application server you basically need to create your test deployment archive, deploy it, execute the test and undeploy the archive.
 As stated above, link:http://arquillian.org/modules/shrinkwrap-shrinkwrap/[ShrinkWrap] covers the archive creation (typically WAR or EAR).
 When it comes to deployment/undeployment, Arquillian controls that, unless you take the reins and control it yourself - just keep an eye for dangling deployments.
 You also get to chose between using so called managed container, where Arquillian starts and stops the desired container for you, and remote container where Arquillian tries to connect to already running container.
@@ -61,7 +62,7 @@ For example to use Arquillian WildFly Managed container you need to define follo
 
 == Servlet environment
 In basic Servlet environment you need to deploy all the dependencies of Weld Servlet integration (as CDI API, Interceptors API, etc.) to your Servlet container and thus embedded container option could be sufficient.
-As you can link:http://arquillian.org/modules/[see] Arquillian offers embedded container adapters for all well known Servlet containers as Tomcat, Jetty and Undertow.
+As you can link:http://arquillian.org/modules/[see] Arquillian offers embedded container adapters for all well known Servlet containers such as Tomcat, Jetty and Undertow.
 
 For example to use Arquillian Embedded Tomcat container you need to define following dependency:
 [ source, xml ]
@@ -75,12 +76,12 @@ For example to use Arquillian Embedded Tomcat container you need to define follo
 ----
 
 == Java SE environment
-Java SE is not effectively a container however it could be very handy to have an option to easily configure classpath elements of your test.
+Java SE is not effectively a container, however it could be very handy to have an option to easily configure classpath elements of your test.
 This is exactly what link:https://github.com/arquillian/arquillian-container-se[Arquillian container SE] offers.
 With this extension you can build your test classpath and the test executes remotely over JMX in new isolated JVM process.
 You can find basic information in link:https://github.com/arquillian/arquillian-container-se/blob/master/README.adoc[README] or you can take look into already mentioned link:https://github.com/cdi-spec/cdi-tck/tree/master/impl/src/main/java/org/jboss/cdi/tck/tests[CDI TCK tests] where you can find link:https://github.com/cdi-spec/cdi-tck/blob/master/impl/src/main/java/org/jboss/cdi/tck/TestGroups.java#L100[SE testgroup] which involves all SE related tests.
 
-The maven dependency for this extension looks like:
+The maven dependency for this extension looks like this:
 [ source, xml ]
 ----
                <dependency>
